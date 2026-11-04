@@ -1,7 +1,143 @@
 ---
-title: "Census Maps"
+title: "Explore Florida household income by county"
 ---
 
-This is a Quarto website.
+Click a county on the map to see its median household income estimates from
+2010 through 2023. The first chart shows Collier County.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+```{r}
+income <- readr::read_csv(
+  "data/median_income.csv",
+  col_types = readr::cols(GEOID = readr::col_character())
+)
+counties <- sf::st_read("data/florida_counties.geojson", quiet = TRUE) |>
+  dplyr::mutate(GEOID = as.character(GEOID)) |>
+  dplyr::left_join(
+    income |> dplyr::filter(year == 2023) |> dplyr::select(GEOID, estimate),
+    by = "GEOID"
+  )
+
+income_palette <- leaflet::colorNumeric("YlGnBu", domain = counties$estimate)
+
+county_map <- leaflet::leaflet(counties, elementId = "county-map") |>
+  leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) |>
+  leaflet::addPolygons(
+    layerId = ~GEOID,
+    color = "#ffffff",
+    weight = 1,
+    fillColor = ~income_palette(estimate),
+    fillOpacity = 0.8,
+    label = ~paste0(NAME, ": $", scales::comma(estimate)),
+    highlightOptions = leaflet::highlightOptions(
+      weight = 2,
+      color = "#263238",
+      bringToFront = TRUE
+    )
+  ) |>
+  leaflet::addLegend(
+    position = "bottomright",
+    pal = income_palette,
+    values = ~estimate,
+    title = "2023 median income",
+    labFormat = leaflet::labelFormat(prefix = "$")
+  ) |>
+  leaflet::fitBounds(-87.7, 24.3, -79.8, 31.1)
+
+initial_county <- "12021"
+initial_income <- income |> dplyr::filter(GEOID == initial_county)
+
+htmlwidgets::onRender(
+  county_map,
+  sprintf(
+    "function(el, x) {
+      var income = %s;
+      var map = this;
+      var selectedLayer = null;
+
+      function bindCounty(layer) {
+        if (!layer.options || layer.options.layerId == null) return;
+
+        if (String(layer.options.layerId) === '12021') {
+          selectedLayer = layer;
+          selectedLayer.setStyle({ weight: 3, color: '#263238' });
+        }
+
+        layer.on('click', function() {
+          var geoid = String(layer.options.layerId);
+          var countyRows = income.filter(function(row) {
+            return row.GEOID === geoid;
+          });
+          if (!countyRows.length) return;
+
+          if (selectedLayer) {
+            selectedLayer.setStyle({ weight: 1, color: '#ffffff' });
+          }
+          selectedLayer = layer;
+          selectedLayer.setStyle({ weight: 3, color: '#263238' });
+
+          Plotly.react(
+            document.querySelector('#income-chart .plotly'),
+            [{
+              x: countyRows.map(function(row) { return row.year; }),
+              y: countyRows.map(function(row) { return row.estimate; }),
+              type: 'scatter',
+              mode: 'lines+markers',
+              line: { color: '#28666e' },
+              marker: { color: '#28666e' }
+            }],
+            {
+              title: countyRows[0].county,
+              xaxis: { title: 'ACS 5-year estimate ending year', dtick: 2 },
+              yaxis: {
+                title: 'Median household income',
+                tickprefix: '$',
+                tickformat: ',.0f'
+              }
+            },
+            { responsive: true }
+          );
+        });
+      }
+
+      map.eachLayer(function(layer) {
+        if (typeof layer.eachLayer === 'function') {
+          layer.eachLayer(bindCounty);
+        } else {
+          bindCounty(layer);
+        }
+      });
+    }",
+    jsonlite::toJSON(
+      income |> dplyr::select(GEOID, county, year, estimate),
+      dataframe = "rows",
+      auto_unbox = TRUE
+    )
+  )
+)
+
+htmltools::div(
+  id = "income-chart",
+  plotly::plot_ly(
+    data = initial_income,
+    x = ~year,
+    y = ~estimate,
+    type = "scatter",
+    mode = "lines+markers",
+    line = list(color = "#28666e"),
+    marker = list(color = "#28666e")
+  ) |>
+    plotly::layout(
+      title = "Collier County, Florida",
+      xaxis = list(title = "ACS 5-year estimate ending year", dtick = 2),
+      yaxis = list(
+        title = "Median household income",
+        tickprefix = "$",
+        tickformat = ",.0f"
+      )
+    )
+)
+```
+
+The map colors show 2023 estimates. Each point is an ACS 5-year estimate, so
+neighboring points use overlapping years. Values are not adjusted for inflation.
+The downloaded data also includes each estimate's margin of error.
