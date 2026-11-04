@@ -145,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates to look at median household income in Multnomah County, Oregon. The series runs from 2010 through 2023; dollar values are not adjusted for inflation, and the 5-year estimates overlap.</p>
+<p>This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates to look at median household income in Collier County, Florida. The series runs from 2010 through 2023; dollar values are not adjusted for inflation, and the 5-year estimates overlap.</p>
 <section id="reproduce-the-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="reproduce-the-analysis">Reproduce the analysis</h2>
 <p>The download step is separate from the website:</p>
@@ -154,7 +154,7 @@ ul.task-list li input[type="checkbox"] {
 <li>Run <code>Rscript data-raw/download_income.R</code> to create <code>data/median_income.csv</code>.</li>
 <li>Run <code>quarto render</code> to rebuild the website. The chart in <code>index.qmd</code> reads that CSV.</li>
 </ol>
-<p>The downloader requests ACS table <code>B19013</code> (median household income) for Multnomah County. The margin of error is included in the CSV.</p>
+<p>The downloader requests ACS table <code>B19013</code> (median household income) for Collier County. The margin of error is included in the CSV.</p>
 
 
 </section>
