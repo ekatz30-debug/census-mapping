@@ -2,10 +2,6 @@ library(tidycensus)
 library(dplyr)
 library(readr)
 
-if (!nzchar(Sys.getenv("CENSUS_API_KEY"))) {
-  stop("Set your Census API key in the CENSUS_API_KEY environment variable.")
-}
-
 county_shapes <- get_acs(
   geography = "county",
   variables = "B19013_001",
