@@ -1,5 +1,7 @@
 ---
 title: "Explore Florida household income by county"
+execute:
+  echo: false
 ---
 
 Click a county on the map to see its median household income estimates from
