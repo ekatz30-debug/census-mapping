@@ -114,14 +114,8 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#reproduce-the-analysis" id="toc-reproduce-the-analysis" class="nav-link active" data-scroll-target="#reproduce-the-analysis">Reproduce the analysis</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -145,19 +139,9 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates to explore median household income in Florida’s counties. The series runs from 2010 through 2023; dollar values are not adjusted for inflation, and the 5-year estimates overlap.</p>
-<section id="reproduce-the-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="reproduce-the-analysis">Reproduce the analysis</h2>
-<p>The download step is separate from the website:</p>
-<ol type="1">
-<li>Configure your Census API key for <code>tidycensus</code> in your local R environment. Do not save the key in this repository.</li>
-<li>Run <code>Rscript data-raw/download_income.R</code> to create the county income CSV and map geometry in <code>data/</code>.</li>
-<li>Run <code>quarto render</code> to rebuild the website. <code>index.qmd</code> reads those files to draw the map and interactive chart.</li>
-</ol>
-<p>The downloader requests ACS table <code>B19013</code> (median household income) for all Florida counties. The margin of error is included in the CSV; the map colors use the latest estimate, 2023.</p>
+<p>This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates (table <code>B19013</code>) to explore median household income in Florida’s counties from 2010 through 2023. Dollar values are not adjusted for inflation, and the 5-year estimates overlap. The map colors show the 2023 estimates.</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

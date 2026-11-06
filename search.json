@@ -11,13 +11,6 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates to explore median household income in Florida’s counties. The series runs from 2010 through 2023; dollar values are not adjusted for inflation, and the 5-year estimates overlap."
-  },
-  {
-    "objectID": "about.html#reproduce-the-analysis",
-    "href": "about.html#reproduce-the-analysis",
-    "title": "About",
-    "section": "Reproduce the analysis",
-    "text": "Reproduce the analysis\nThe download step is separate from the website:\n\nConfigure your Census API key for tidycensus in your local R environment. Do not save the key in this repository.\nRun Rscript data-raw/download_income.R to create the county income CSV and map geometry in data/.\nRun quarto render to rebuild the website. index.qmd reads those files to draw the map and interactive chart.\n\nThe downloader requests ACS table B19013 (median household income) for all Florida counties. The margin of error is included in the CSV; the map colors use the latest estimate, 2023."
+    "text": "This site uses the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates (table B19013) to explore median household income in Florida’s counties from 2010 through 2023. Dollar values are not adjusted for inflation, and the 5-year estimates overlap. The map colors show the 2023 estimates."
   }
 ]
